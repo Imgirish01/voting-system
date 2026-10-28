@@ -1,0 +1,12 @@
+{
+  "name": "college-election-voting-system-root",
+  "version": "1.0.0",
+  "description": "ECI Themed College Election Voting System Monorepo Root",
+  "scripts": {
+    "start:server": "cd server && npm start",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build:client": "cd client && npm run build"
+  }
+}
+
