@@ -7,6 +7,7 @@ const authenticate = require('../middleware/authenticate');
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
+router.post('/switch-role', authController.switchRole);
 
 // Authenticated route
 router.get('/me', authenticate, authController.getMe);

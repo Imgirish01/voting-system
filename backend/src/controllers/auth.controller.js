@@ -270,10 +270,63 @@ const getMe = async (req, res, next) => {
   }
 };
 
+/**
+ * Direct Instant Panel Switch (1-Click, No Password Required)
+ */
+const switchRole = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+    let targetUser;
+
+    if (role === 'ADMIN') {
+      const [admins] = await db.query("SELECT * FROM users WHERE role = 'ADMIN' LIMIT 1");
+      targetUser = admins && admins[0];
+    } else if (role === 'CANDIDATE') {
+      const [candidates] = await db.query("SELECT * FROM users WHERE role = 'CANDIDATE' LIMIT 1");
+      targetUser = candidates && candidates[0];
+    } else {
+      const [voters] = await db.query("SELECT * FROM users WHERE role = 'VOTER' AND account_status = 'APPROVED' LIMIT 1");
+      targetUser = voters && voters[0];
+      if (!targetUser) {
+        const [anyVoters] = await db.query("SELECT * FROM users WHERE role = 'VOTER' LIMIT 1");
+        targetUser = anyVoters && anyVoters[0];
+      }
+    }
+
+    if (!targetUser) {
+      return res.status(404).json({ success: false, message: `No user found for role ${role}` });
+    }
+
+    const token = signToken({ id: targetUser.id, role: targetUser.role, email: targetUser.email });
+    res.cookie('token', token, getCookieOptions());
+
+    const [rows] = await db.query(
+      `SELECT u.id, u.full_name, u.email, u.role, u.college_registration_number,
+              u.department_id, u.course, u.academic_year, u.account_status, u.avatar_url,
+              u.created_at, d.name as department_name, d.code as department_code
+       FROM users u
+       LEFT JOIN departments d ON u.department_id = d.id
+       WHERE u.id = ?`,
+      [targetUser.id]
+    );
+
+    const safeUser = rows && rows[0] ? rows[0] : targetUser;
+
+    return res.json({
+      success: true,
+      message: `Directly switched to ${safeUser.role} panel.`,
+      user: safeUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
   getMe,
+  switchRole,
 };
 

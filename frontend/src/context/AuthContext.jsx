@@ -112,9 +112,30 @@ export const AuthProvider = ({ children }) => {
   };
 
   const switchToRole = async (targetRole) => {
-    const creds = ROLE_DEFAULT_CREDENTIALS[targetRole] || ROLE_DEFAULT_CREDENTIALS.ADMIN;
-    await switchAccount(creds.email, creds.password);
-    return creds;
+    setLoading(true);
+    try {
+      const res = await api.post('/auth/switch-role', { role: targetRole });
+      if (res.success && res.user) {
+        setUser(res.user);
+        const dashboards = {
+          ADMIN: '/admin/dashboard',
+          VOTER: '/voter/dashboard',
+          CANDIDATE: '/candidate/dashboard',
+        };
+        return {
+          user: res.user,
+          dashboard: dashboards[targetRole] || '/admin/dashboard',
+          label: `${targetRole} Panel`,
+        };
+      }
+    } catch (err) {
+      console.error('Instant switch fallback', err);
+      const creds = ROLE_DEFAULT_CREDENTIALS[targetRole] || ROLE_DEFAULT_CREDENTIALS.ADMIN;
+      await switchAccount(creds.email, creds.password);
+      return creds;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const cycleToNextRole = async () => {
@@ -124,9 +145,7 @@ export const AuthProvider = ({ children }) => {
     else if (currentRole === 'VOTER') nextRole = 'CANDIDATE';
     else if (currentRole === 'CANDIDATE') nextRole = 'ADMIN';
 
-    const creds = ROLE_DEFAULT_CREDENTIALS[nextRole];
-    await switchAccount(creds.email, creds.password);
-    return { nextRole, dashboard: creds.dashboard };
+    return await switchToRole(nextRole);
   };
 
   return (

@@ -466,14 +466,23 @@ const executeFallbackQuery = async (sql, params = []) => {
     // 1. SELECT * FROM users WHERE email = ?
     if (/FROM users/i.test(cleanSql)) {
       let results = [...fileStore.users];
-      if (/WHERE email = \?/i.test(cleanSql)) {
+      if (/WHERE (u\.)?email = \?/i.test(cleanSql)) {
         results = results.filter(u => u.email.toLowerCase() === String(params[0]).toLowerCase());
-      } else if (/WHERE id = \?/i.test(cleanSql)) {
+      } else if (/WHERE (u\.)?id = \?/i.test(cleanSql)) {
         results = results.filter(u => u.id === Number(params[0]));
-      } else if (/WHERE college_registration_number = \?/i.test(cleanSql)) {
+      } else if (/WHERE (u\.)?college_registration_number = \?/i.test(cleanSql)) {
         results = results.filter(u => u.college_registration_number === String(params[0]));
-      } else if (/WHERE role = \?/i.test(cleanSql)) {
+      } else if (/WHERE (u\.)?role = \?/i.test(cleanSql)) {
         results = results.filter(u => u.role === String(params[0]));
+      } else if (/role = 'ADMIN'/i.test(cleanSql)) {
+        results = results.filter(u => u.role === 'ADMIN');
+      } else if (/role = 'CANDIDATE'/i.test(cleanSql)) {
+        results = results.filter(u => u.role === 'CANDIDATE');
+      } else if (/role = 'VOTER'/i.test(cleanSql)) {
+        results = results.filter(u => u.role === 'VOTER');
+        if (/account_status = 'APPROVED'/i.test(cleanSql)) {
+          results = results.filter(u => u.account_status === 'APPROVED');
+        }
       }
       results.sort((a, b) => (b.id || 0) - (a.id || 0));
       return [results];
