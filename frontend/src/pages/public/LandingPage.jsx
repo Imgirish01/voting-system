@@ -53,15 +53,15 @@ const LandingPage = () => {
           <div className="relative z-10 max-w-3xl space-y-4">
             <div className="inline-flex items-center space-x-2 bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full text-xs font-bold border border-amber-400/30">
               <Shield className="w-3.5 h-3.5" />
-              <span>OFFICIAL ELECTION COMMISSION PORTAL • 2026-27</span>
+              <span>OFFICIAL E-VOTERS COMMISSION • 2026-27</span>
             </div>
 
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-              Empowering Student Democracy with Integrity & Secrecy
+              A Blockchain-Based Framework for Transparent and Tamper-Proof Online Elections
             </h1>
 
             <p className="text-sm sm:text-base text-slate-200 leading-relaxed max-w-2xl">
-              Welcome to the official, statutory College Election Commission portal. Register as a verified voter under Form 6-C, submit candidate nominations under Form 2-B, and cast your secret ballot through our Electronic Voting Machine (EVM) system.
+              An institutional voting portal engineered with cryptographic integrity, secret ballot anonymization, and immutable audit trails for free, fair, and verifiable campus elections.
             </p>
 
             {/* Quick Call to Action Buttons */}

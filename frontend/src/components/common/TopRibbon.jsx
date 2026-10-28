@@ -47,7 +47,7 @@ const TopRibbon = () => {
           </span>
           <span className="hidden md:inline text-slate-400">|</span>
           <span className="hidden md:inline text-slate-300">
-            Autonomous Statutory Authority for Student Elections
+            A Blockchain-Based Framework for Transparent and Tamper-Proof Online Elections
           </span>
         </div>
 

@@ -21,7 +21,7 @@ const Footer = () => {
               </h3>
             </div>
             <p className="text-slate-400 leading-relaxed">
-              Autonomous statutory authority established under College Senate Charter to conduct free, fair, and transparent student council elections.
+              A blockchain-based framework for transparent and tamper-proof online elections, ensuring secret ballot anonymity and cryptographically verifiable results.
             </p>
             <div className="pt-2 text-slate-400 space-y-1">
               <p className="flex items-center"><MapPin className="w-3.5 h-3.5 mr-1.5 text-amber-400" /> Administrative Block, Room 104</p>

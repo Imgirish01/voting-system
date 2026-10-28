@@ -1,4 +1,4 @@
-# College Election Voting System (ECI-Themed)
+# A Blockchain-Based Framework for Transparent and Tamper-Proof Online Elections
 ### ई-वोटर्स आयोग • E-Voters Commission Statutory Voting Portal
 
 An enterprise-grade, full-stack College Election Voting System engineered with the official look, feel, and institutional dignity of the **Election Commission of India (ECI)** portal.

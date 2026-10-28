@@ -84,7 +84,7 @@
       "department_id": 3,
       "course": "B.Tech ME",
       "academic_year": "2nd Year",
-      "account_status": "PENDING",
+      "account_status": "APPROVED",
       "avatar_url": null,
       "created_at": "2026-10-25T14:00:00.000Z"
     },
@@ -98,7 +98,7 @@
       "department_id": 4,
       "course": "MBA",
       "academic_year": "Final Year",
-      "account_status": "REJECTED",
+      "account_status": "APPROVED",
       "avatar_url": null,
       "created_at": "2026-10-20T12:00:00.000Z"
     },
@@ -154,7 +154,7 @@
       "department_id": 1,
       "course": "B.Tech Computer Science",
       "academic_year": "3rd Year",
-      "account_status": "PENDING",
+      "account_status": "APPROVED",
       "avatar_url": null,
       "created_at": "2026-10-28T14:23:57.369Z"
     },
@@ -168,7 +168,7 @@
       "department_id": 1,
       "course": "B.Tech CSE",
       "academic_year": "3rd Year",
-      "account_status": "PENDING",
+      "account_status": "APPROVED",
       "avatar_url": null,
       "created_at": "2026-10-28T14:33:05.105Z"
     }
@@ -201,50 +201,50 @@
     {
       "id": 3,
       "user_id": 4,
-      "application_status": "PENDING",
+      "application_status": "APPROVED",
       "student_id_number": "2024ME0305",
       "id_proof_type": "College Identity Card",
       "submitted_at": "2026-10-25 16:20:00",
-      "reviewed_by": null,
-      "reviewed_at": null,
+      "reviewed_by": 1,
+      "reviewed_at": "2026-10-28T15:54:10.282Z",
       "rejection_reason": null,
       "remarks": "Scrutiny pending before Election Observer."
     },
     {
       "id": 4,
       "user_id": 5,
-      "application_status": "REJECTED",
+      "application_status": "APPROVED",
       "student_id_number": "2022MBA0401",
       "id_proof_type": "College Identity Card",
       "submitted_at": "2026-10-20 12:00:00",
       "reviewed_by": 1,
-      "reviewed_at": "2026-10-22 15:10:00",
-      "rejection_reason": "Uploaded ID card image is blurred and unreadable. Please upload a clear photo scan.",
+      "reviewed_at": "2026-10-28T15:54:05.503Z",
+      "rejection_reason": null,
       "remarks": "Rejected under ECI verification guidelines Rule 4.2."
     },
     {
       "id": 5,
       "user_id": 9,
-      "application_status": "PENDING",
+      "application_status": "APPROVED",
       "college_id_card_url": null,
       "student_id_number": "hh",
       "id_proof_type": "College Identity Card",
       "submitted_at": "2026-10-28T14:23:57.374Z",
-      "reviewed_by": null,
-      "reviewed_at": null,
+      "reviewed_by": 1,
+      "reviewed_at": "2026-10-28T15:53:54.125Z",
       "rejection_reason": null,
       "remarks": "Submitted with online elector registration (Form 6-C)."
     },
     {
       "id": 6,
       "user_id": 10,
-      "application_status": "PENDING",
+      "application_status": "APPROVED",
       "college_id_card_url": null,
       "student_id_number": "79325",
       "id_proof_type": "College Identity Card",
       "submitted_at": "2026-10-28T14:33:05.121Z",
-      "reviewed_by": null,
-      "reviewed_at": null,
+      "reviewed_by": 1,
+      "reviewed_at": "2026-10-28T15:53:55.638Z",
       "rejection_reason": null,
       "remarks": "Submitted with online elector registration (Form 6-C)."
     }
@@ -329,6 +329,26 @@
       "results_published_by": null,
       "created_by": 1,
       "created_at": "2026-10-28T14:14:09.030Z"
+    },
+    {
+      "id": 5,
+      "title": "student concsil",
+      "description": "apply fast",
+      "election_type": "Student Council President",
+      "academic_year": "2026-27",
+      "scope": "DEPARTMENTAL",
+      "department_id": 1,
+      "start_at": "2026-10-30T22:00:00.000Z",
+      "end_at": "2026-11-02T06:00:00.000Z",
+      "application_deadline": "2026-10-30T12:00:00.000Z",
+      "status": "APPLICATION_OPEN",
+      "eligibility_criteria": "Bona fide college students with minimum 75% attendance and no disciplinary arrears.",
+      "max_winners": 1,
+      "is_results_published": 0,
+      "results_published_at": null,
+      "results_published_by": null,
+      "created_by": 1,
+      "created_at": "2026-10-28T15:57:34.268Z"
     }
   ],
   "election_positions": [
@@ -369,6 +389,14 @@
       "election_id": 4,
       "position_name": "vice president",
       "description": null,
+      "winners_allowed": 1,
+      "tie_policy": "ADMIN_DECISION"
+    },
+    {
+      "id": 6,
+      "election_id": 5,
+      "position_name": "President",
+      "description": "Supreme representative for general student body in university senate.",
       "winners_allowed": 1,
       "tie_policy": "ADMIN_DECISION"
     }
@@ -430,6 +458,20 @@
       "position_id": 1,
       "user_id": 2,
       "voted_at": "2026-10-28T14:03:20.883Z"
+    },
+    {
+      "id": 2,
+      "election_id": 1,
+      "position_id": 2,
+      "user_id": 10,
+      "voted_at": "2026-10-28T16:00:03.574Z"
+    },
+    {
+      "id": 3,
+      "election_id": 1,
+      "position_id": 1,
+      "user_id": 10,
+      "voted_at": "2026-10-28T16:00:12.245Z"
     }
   ],
   "votes": [
@@ -440,6 +482,22 @@
       "candidate_application_id": 1,
       "voter_token": "4779d758792195db0e19a86ca7b2453e28d6922cd28530237bd874645012be11",
       "cast_at": "2026-10-28T14:03:20.884Z"
+    },
+    {
+      "id": 2,
+      "election_id": 1,
+      "position_id": 2,
+      "candidate_application_id": 3,
+      "voter_token": "a47f4d4d8ac32ccb0d03fad919591962e342d23a7bd3f693726f1cd4dbd0bc62",
+      "cast_at": "2026-10-28T16:00:03.597Z"
+    },
+    {
+      "id": 3,
+      "election_id": 1,
+      "position_id": 1,
+      "candidate_application_id": 1,
+      "voter_token": "3d021cb1da06d0b3e580eb0a05b9ad9835e659c16ea83756e77e07bc3957b4fe",
+      "cast_at": "2026-10-28T16:00:12.276Z"
     }
   ],
   "election_results": [
@@ -19519,6 +19577,42 @@
       "notification_type": "ELECTION_ALERT",
       "read_at": null,
       "created_at": "2026-10-28T14:43:27.505Z"
+    },
+    {
+      "id": 2118,
+      "user_id": 9,
+      "title": "Elector Verification Approved (Form 6-C)",
+      "message": "Congratulations! Your College Elector Verification has been APPROVED by the Chief Election Officer. You are now officially eligible to vote in active elections.",
+      "notification_type": "STATUS_CHANGE",
+      "read_at": null,
+      "created_at": "2026-10-28T15:53:54.215Z"
+    },
+    {
+      "id": 2119,
+      "user_id": 10,
+      "title": "Elector Verification Approved (Form 6-C)",
+      "message": "Congratulations! Your College Elector Verification has been APPROVED by the Chief Election Officer. You are now officially eligible to vote in active elections.",
+      "notification_type": "STATUS_CHANGE",
+      "read_at": null,
+      "created_at": "2026-10-28T15:53:55.982Z"
+    },
+    {
+      "id": 2120,
+      "user_id": 5,
+      "title": "Elector Verification Approved (Form 6-C)",
+      "message": "Congratulations! Your College Elector Verification has been APPROVED by the Chief Election Officer. You are now officially eligible to vote in active elections.",
+      "notification_type": "STATUS_CHANGE",
+      "read_at": null,
+      "created_at": "2026-10-28T15:54:05.588Z"
+    },
+    {
+      "id": 2121,
+      "user_id": 4,
+      "title": "Elector Verification Approved (Form 6-C)",
+      "message": "Congratulations! Your College Elector Verification has been APPROVED by the Chief Election Officer. You are now officially eligible to vote in active elections.",
+      "notification_type": "STATUS_CHANGE",
+      "read_at": null,
+      "created_at": "2026-10-28T15:54:10.359Z"
     }
   ],
   "audit_logs": [
@@ -26689,6 +26783,76 @@
       "details": "undefined",
       "ip_address": "127.0.0.1",
       "created_at": "2026-10-28T14:43:27.345Z"
+    },
+    {
+      "id": 718,
+      "actor_user_id": 1,
+      "action": "VOTER_APP_APPROVED",
+      "entity_type": "VOTER_APPLICATIONS",
+      "entity_id": 5,
+      "details": "Voter application for user ID 9 set to APPROVED. ",
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-28T15:53:54.188Z"
+    },
+    {
+      "id": 719,
+      "actor_user_id": 1,
+      "action": "VOTER_APP_APPROVED",
+      "entity_type": "VOTER_APPLICATIONS",
+      "entity_id": 6,
+      "details": "Voter application for user ID 10 set to APPROVED. ",
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-28T15:53:55.943Z"
+    },
+    {
+      "id": 720,
+      "actor_user_id": 1,
+      "action": "VOTER_APP_APPROVED",
+      "entity_type": "VOTER_APPLICATIONS",
+      "entity_id": 4,
+      "details": "Voter application for user ID 5 set to APPROVED. ",
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-28T15:54:05.563Z"
+    },
+    {
+      "id": 721,
+      "actor_user_id": 1,
+      "action": "VOTER_APP_APPROVED",
+      "entity_type": "VOTER_APPLICATIONS",
+      "entity_id": 3,
+      "details": "Voter application for user ID 4 set to APPROVED. ",
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-28T15:54:10.338Z"
+    },
+    {
+      "id": 722,
+      "actor_user_id": 1,
+      "action": "ELECTION_CREATED",
+      "entity_type": "ELECTIONS",
+      "entity_id": 5,
+      "details": "Election created: \"student concsil\" (Student Council President)",
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-28T15:57:34.320Z"
+    },
+    {
+      "id": 723,
+      "actor_user_id": 10,
+      "action": "BALLOT_CAST",
+      "entity_type": "ELECTIONS",
+      "entity_id": 1,
+      "details": "Ballot cast for position ID 2 under secret token protocol.",
+      "ip_address": "::1",
+      "created_at": "2026-10-28T16:00:03.620Z"
+    },
+    {
+      "id": 724,
+      "actor_user_id": 10,
+      "action": "BALLOT_CAST",
+      "entity_type": "ELECTIONS",
+      "entity_id": 1,
+      "details": "Ballot cast for position ID 1 under secret token protocol.",
+      "ip_address": "::1",
+      "created_at": "2026-10-28T16:00:12.302Z"
     }
   ]
 }

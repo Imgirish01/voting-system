@@ -94,7 +94,7 @@ const Navbar = () => {
               E-VOTERS COMMISSION
             </h1>
             <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium">
-              Statutory Student Council Voting Portal • Session 2026-27
+              A Blockchain-Based Framework for Transparent and Tamper-Proof Online Elections
             </p>
           </div>
         </Link>
