@@ -65,7 +65,7 @@ An enterprise-grade, full-stack College Election Voting System engineered with t
 
 ### 2. Backend Setup
 ```bash
-cd college-voting-system/server
+cd backend
 
 # Install dependencies
 npm install
@@ -78,7 +78,7 @@ npm run dev
 ### 3. Frontend Setup
 In a separate terminal:
 ```bash
-cd college-voting-system/client
+cd frontend
 
 # Install dependencies
 npm install
@@ -109,8 +109,8 @@ npm run dev
 ## 📂 Project Architecture
 
 ```
-college-voting-system/
-├── client/                     # Vite + React + Tailwind Frontend
+voting-system/
+├── frontend/                   # Vite + React + Tailwind Frontend
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── common/         # Navbar, TopRibbon, Ticker, StatusBadge, Footer
@@ -127,7 +127,7 @@ college-voting-system/
 │   │   └── services/           # Axios API Client
 │   └── package.json
 │
-├── server/                     # Node.js + Express Backend REST API
+├── backend/                    # Node.js + Express Backend REST API
 │   ├── src/
 │   │   ├── config/             # Dual-engine Database (MySQL + Fallback)
 │   │   ├── controllers/        # Auth, Admin, Voter, Candidate, Election
