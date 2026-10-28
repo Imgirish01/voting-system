@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ONLINE',
-    service: 'Campus Election Commission API Portal',
+    service: 'E-Voters Commission API Portal',
     timestamp: new Date().toISOString(),
   });
 });

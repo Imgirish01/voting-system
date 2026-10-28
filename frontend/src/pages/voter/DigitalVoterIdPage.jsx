@@ -65,14 +65,14 @@ const DigitalVoterIdPage = () => {
           <div className="bg-[#082545] text-white p-4 flex items-center justify-between border-b-2 border-amber-500">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-amber-400 text-slate-950 font-black flex items-center justify-center text-sm shadow">
-                ECI
+                EVC
               </div>
               <div>
                 <p className="text-[11px] font-bold text-amber-400 uppercase tracking-widest">
-                  भारत निर्वाचन आयोग
+                  ई-वोटर्स आयोग
                 </p>
                 <h3 className="text-sm sm:text-base font-extrabold tracking-tight">
-                  ELECTION COMMISSION OF CAMPUS
+                  E-VOTERS COMMISSION
                 </h3>
               </div>
             </div>

@@ -14,10 +14,10 @@ const Footer = () => {
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 font-bold">
-                ECI
+                EVC
               </div>
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                CAMPUS ELECTION COMMISSION
+                E-VOTERS COMMISSION
               </h3>
             </div>
             <p className="text-slate-400 leading-relaxed">
@@ -106,7 +106,7 @@ const Footer = () => {
 
         {/* Bottom Copyright and Security Stamp */}
         <div className="mt-8 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-slate-500 text-[11px] gap-2">
-          <p>© 2026 Campus Election Commission. All Rights Reserved. Built with ECI Design Standards.</p>
+          <p>© 2026 E-Voters Commission. All Rights Reserved. Built with Statutory Design Standards.</p>
           <div className="flex items-center space-x-3 text-slate-400">
             <span>256-Bit SSL Encrypted</span>
             <span>•</span>

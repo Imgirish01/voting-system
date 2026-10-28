@@ -1,5 +1,5 @@
 # College Election Voting System (ECI-Themed)
-### भारत निर्वाचन आयोग • Campus Election Commission Statutory Voting Portal
+### ई-वोटर्स आयोग • E-Voters Commission Statutory Voting Portal
 
 An enterprise-grade, full-stack College Election Voting System engineered with the official look, feel, and institutional dignity of the **Election Commission of India (ECI)** portal.
 

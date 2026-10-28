@@ -17,7 +17,7 @@ const startServer = async () => {
     // 3. Start HTTP Server
     app.listen(PORT, () => {
       logger.info('================================================================');
-      logger.info(`🏛️  CAMPUS ELECTION COMMISSION REST API SERVER RUNNING ON PORT ${PORT}`);
+      logger.info(`🏛️  E-VOTERS COMMISSION REST API SERVER RUNNING ON PORT ${PORT}`);
       logger.info(`🌐 Health Endpoint: http://localhost:${PORT}/api/health`);
       logger.info(`🗳️  Environment: ${process.env.NODE_ENV || 'development'}`);
       logger.info('================================================================');

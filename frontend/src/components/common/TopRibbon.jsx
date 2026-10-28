@@ -41,13 +41,13 @@ const TopRibbon = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex flex-wrap items-center justify-between gap-2">
         {/* Left Side: Official Statutory Notice */}
         <div className="flex items-center space-x-3">
-          <span className="inline-flex items-center font-medium text-amber-400">
+          <span className="inline-flex items-center font-semibold text-amber-400">
             <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-            भारत सरकार | GOVERNMENT OF CAMPUS
+            ई-वोटर्स आयोग | E-VOTERS COMMISSION
           </span>
           <span className="hidden md:inline text-slate-400">|</span>
           <span className="hidden md:inline text-slate-300">
-            Autonomous Statutory Authority for College Student Elections
+            Autonomous Statutory Authority for Student Elections
           </span>
         </div>
 
@@ -55,7 +55,7 @@ const TopRibbon = () => {
         <div className="flex items-center space-x-4">
           <div className="hidden lg:flex items-center text-slate-300 space-x-1">
             <Phone className="w-3.5 h-3.5 text-amber-400" />
-            <span>ECI Voter Helpline: <strong className="text-white">1800-CAMPUS-VOTE</strong> (Toll Free)</span>
+            <span>Voter Helpline: <strong className="text-white">1800-CAMPUS-VOTE</strong> (Toll Free)</span>
           </div>
 
           <div className="flex items-center space-x-1 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">

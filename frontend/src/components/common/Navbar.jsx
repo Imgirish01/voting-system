@@ -69,14 +69,14 @@ const Navbar = () => {
           <div className="flex flex-col">
             <div className="flex items-center space-x-2">
               <span className="text-xs sm:text-sm font-semibold tracking-wider text-amber-400 uppercase">
-                महाविद्यालय निर्वाचन आयोग
+                ई-वोटर्स आयोग
               </span>
               <span className="bg-amber-500/20 text-amber-300 text-[10px] font-bold px-1.5 py-0.5 rounded border border-amber-400/40">
-                ECI PORTAL
+                E-VOTERS
               </span>
             </div>
             <h1 className="text-base sm:text-xl font-bold tracking-tight text-white flex items-center">
-              CAMPUS ELECTION COMMISSION
+              E-VOTERS COMMISSION
             </h1>
             <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium">
               Statutory Student Council Voting Portal • Session 2026-27
@@ -101,7 +101,7 @@ const Navbar = () => {
               isActive('/about') ? 'bg-amber-500 text-slate-900 font-bold' : 'text-slate-200 hover:bg-slate-800'
             }`}
           >
-            About ECI
+            About Commission
           </Link>
 
           <Link

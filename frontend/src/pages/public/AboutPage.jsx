@@ -14,7 +14,7 @@ const AboutPage = () => {
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            About the Campus Election Commission
+            About the E-Voters Commission
           </h1>
           <p className="text-sm text-slate-300 mt-2 leading-relaxed">
             Autonomous election authority empowered under the University Charter to conduct institutional student council elections in accordance with the Lyngdoh Committee recommendations and Election Commission of India (ECI) constitutional principles.

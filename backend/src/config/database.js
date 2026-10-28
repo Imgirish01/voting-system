@@ -395,7 +395,7 @@ const getDefaultSeedData = () => {
         action: 'SYSTEM_BOOT',
         entity_type: 'SYSTEM',
         entity_id: 1,
-        details: 'Campus Election Commission Portal initialized under ECI standard governance rules.',
+        details: 'E-Voters Commission Portal initialized under standard governance rules.',
         created_at: new Date().toISOString()
       },
       {
