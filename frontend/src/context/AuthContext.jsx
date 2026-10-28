@@ -90,6 +90,45 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const ROLE_DEFAULT_CREDENTIALS = {
+    ADMIN: {
+      email: 'admin@college.edu',
+      password: 'Admin@123',
+      dashboard: '/admin/dashboard',
+      label: 'Admin Desk (CEO)',
+    },
+    VOTER: {
+      email: 'aarav.sharma@college.edu',
+      password: 'Password@123',
+      dashboard: '/voter/dashboard',
+      label: 'Voter Panel (Approved)',
+    },
+    CANDIDATE: {
+      email: 'vikram.roy@college.edu',
+      password: 'Password@123',
+      dashboard: '/candidate/dashboard',
+      label: 'Candidate Panel',
+    },
+  };
+
+  const switchToRole = async (targetRole) => {
+    const creds = ROLE_DEFAULT_CREDENTIALS[targetRole] || ROLE_DEFAULT_CREDENTIALS.ADMIN;
+    await switchAccount(creds.email, creds.password);
+    return creds;
+  };
+
+  const cycleToNextRole = async () => {
+    const currentRole = user?.role || 'ADMIN';
+    let nextRole = 'VOTER';
+    if (currentRole === 'ADMIN') nextRole = 'VOTER';
+    else if (currentRole === 'VOTER') nextRole = 'CANDIDATE';
+    else if (currentRole === 'CANDIDATE') nextRole = 'ADMIN';
+
+    const creds = ROLE_DEFAULT_CREDENTIALS[nextRole];
+    await switchAccount(creds.email, creds.password);
+    return { nextRole, dashboard: creds.dashboard };
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -101,6 +140,9 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         switchAccount,
+        switchToRole,
+        cycleToNextRole,
+        ROLE_DEFAULT_CREDENTIALS,
         refreshUser: fetchCurrentUser,
       }}
     >

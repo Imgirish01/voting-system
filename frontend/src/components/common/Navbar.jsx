@@ -18,12 +18,11 @@ import {
 } from 'lucide-react';
 
 const Navbar = () => {
-  const { user, logout, switchAccount } = useAuth();
+  const { user, logout, switchToRole, cycleToNextRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [roleSwitcherOpen, setRoleSwitcherOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
 
   const handleLogout = async () => {
@@ -32,15 +31,31 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const handleRoleQuickSwitch = async (email, password, dest) => {
+  // 1-Click Auto Cycle: Admin -> Voter -> Candidate -> Admin
+  const handleAutoCycle = async () => {
+    if (switching) return;
     setSwitching(true);
-    setRoleSwitcherOpen(false);
     setUserDropdownOpen(false);
     try {
-      await switchAccount(email, password);
-      navigate(dest);
+      const { dashboard } = await cycleToNextRole();
+      navigate(dashboard);
     } catch (err) {
-      console.error(err);
+      console.error('Auto switch error', err);
+    } finally {
+      setSwitching(false);
+    }
+  };
+
+  // 1-Click Direct Role Jump
+  const handleDirectRole = async (targetRole) => {
+    if (switching) return;
+    setSwitching(true);
+    setUserDropdownOpen(false);
+    try {
+      const creds = await switchToRole(targetRole);
+      navigate(creds.dashboard);
+    } catch (err) {
+      console.error('Role jump error', err);
     } finally {
       setSwitching(false);
     }
@@ -124,62 +139,43 @@ const Navbar = () => {
             <span>Voter FAQ</span>
           </Link>
 
-          {/* Quick 1-Click Role Switcher */}
-          <div className="relative">
+          {/* Automatic 1-Click Role Switcher */}
+          <div className="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-lg border border-amber-500/50 shadow-inner">
             <button
-              onClick={() => setRoleSwitcherOpen(!roleSwitcherOpen)}
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-md text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/40 hover:bg-amber-500/30 transition-colors"
-              title="Quickly switch between Admin, Voter, and Candidate accounts"
+              type="button"
+              onClick={handleAutoCycle}
+              disabled={switching}
+              className="flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all shadow-sm active:scale-95 disabled:opacity-60 cursor-pointer"
+              title="Click to automatically cycle: Admin ➔ Voter ➔ Candidate ➔ Admin"
             >
-              <Repeat className="w-3.5 h-3.5 text-amber-400" />
-              <span>Switch Panel</span>
-              <ChevronDown className="w-3 h-3 ml-0.5" />
+              <Repeat className={`w-3.5 h-3.5 ${switching ? 'animate-spin' : ''}`} />
+              <span>{switching ? 'Switching...' : 'Switch Panel ➔'}</span>
             </button>
 
-            {roleSwitcherOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-white text-slate-800 rounded-xl shadow-2xl border-2 border-amber-500 py-2 z-50 animate-in fade-in zoom-in-95">
-                <div className="px-3 py-1.5 border-b border-slate-100">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    ECI 1-Click Role Switcher
-                  </p>
-                </div>
-
-                <div className="p-1.5 space-y-1 text-xs">
+            <div className="hidden lg:flex items-center space-x-1 pl-1">
+              {[
+                { role: 'ADMIN', label: 'Admin Desk' },
+                { role: 'VOTER', label: 'Voter Panel' },
+                { role: 'CANDIDATE', label: 'Candidate' },
+              ].map((item) => {
+                const isCurrent = user?.role === item.role;
+                return (
                   <button
-                    onClick={() => handleRoleQuickSwitch('admin@college.edu', 'Admin@123', '/admin/dashboard')}
-                    className="w-full text-left p-2 rounded-lg hover:bg-blue-50 flex items-center space-x-2 transition-colors"
+                    key={item.role}
+                    type="button"
+                    disabled={switching}
+                    onClick={() => handleDirectRole(item.role)}
+                    className={`px-2.5 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
+                      isCurrent
+                        ? 'bg-blue-600 text-white shadow-xs ring-1 ring-white/30'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                    }`}
                   >
-                    <Shield className="w-4 h-4 text-blue-900 flex-shrink-0" />
-                    <div>
-                      <span className="font-bold block text-slate-900">Admin Desk (CEO)</span>
-                      <span className="text-[10px] text-slate-500">Prof. S. K. Sharma</span>
-                    </div>
+                    {item.label}
                   </button>
-
-                  <button
-                    onClick={() => handleRoleQuickSwitch('aarav.sharma@college.edu', 'Password@123', '/voter/dashboard')}
-                    className="w-full text-left p-2 rounded-lg hover:bg-emerald-50 flex items-center space-x-2 transition-colors"
-                  >
-                    <UserCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                    <div>
-                      <span className="font-bold block text-slate-900">Voter Panel (Approved)</span>
-                      <span className="text-[10px] text-slate-500">Aarav Sharma • Form 6-C Verified</span>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => handleRoleQuickSwitch('vikram.roy@college.edu', 'Password@123', '/candidate/dashboard')}
-                    className="w-full text-left p-2 rounded-lg hover:bg-amber-50 flex items-center space-x-2 transition-colors"
-                  >
-                    <Award className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                    <div>
-                      <span className="font-bold block text-slate-900">Candidate Panel</span>
-                      <span className="text-[10px] text-slate-500">Vikramaditya Roy (Nominee)</span>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
+                );
+              })}
+            </div>
           </div>
 
           {/* User Profile Dropdown */}
@@ -255,11 +251,13 @@ const Navbar = () => {
         {/* Mobile menu button */}
         <div className="md:hidden flex items-center space-x-2">
           <button
-            onClick={() => setRoleSwitcherOpen(!roleSwitcherOpen)}
-            className="p-1.5 rounded bg-amber-500 text-slate-950 text-xs font-bold flex items-center space-x-1"
+            type="button"
+            onClick={handleAutoCycle}
+            disabled={switching}
+            className="p-1.5 px-2.5 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center space-x-1"
           >
-            <Repeat className="w-3.5 h-3.5" />
-            <span>Switch</span>
+            <Repeat className={`w-3.5 h-3.5 ${switching ? 'animate-spin' : ''}`} />
+            <span>{switching ? 'Switching...' : 'Switch'}</span>
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
@@ -15,10 +15,12 @@ import {
   History,
   CheckCircle,
   HelpCircle,
+  Repeat,
 } from 'lucide-react';
 
 const Sidebar = () => {
-  const { user } = useAuth();
+  const { user, switchToRole, cycleToNextRole } = useAuth();
+  const navigate = useNavigate();
   if (!user) return null;
 
   const role = user.role;
@@ -121,6 +123,52 @@ const Sidebar = () => {
           );
         })}
       </nav>
+
+      {/* 1-Click Instant Panel Switcher */}
+      <div className="p-3 border-t border-slate-200 bg-slate-50 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            Instant Panel Switch
+          </span>
+          <button
+            type="button"
+            onClick={async () => {
+              const { dashboard } = await cycleToNextRole();
+              navigate(dashboard);
+            }}
+            className="text-[10px] font-bold text-amber-600 hover:text-amber-700 flex items-center cursor-pointer"
+            title="Automatically switch to next panel"
+          >
+            <Repeat className="w-3 h-3 mr-0.5" /> Next ➔
+          </button>
+        </div>
+        <div className="grid grid-cols-3 gap-1 text-[11px]">
+          {[
+            { role: 'ADMIN', label: 'Admin', to: '/admin/dashboard' },
+            { role: 'VOTER', label: 'Voter', to: '/voter/dashboard' },
+            { role: 'CANDIDATE', label: 'Candidate', to: '/candidate/dashboard' },
+          ].map((item) => {
+            const isCurrent = user?.role === item.role;
+            return (
+              <button
+                key={item.role}
+                type="button"
+                onClick={async () => {
+                  const creds = await switchToRole(item.role);
+                  navigate(creds.dashboard);
+                }}
+                className={`py-1.5 px-1 rounded-md font-bold text-center transition-all cursor-pointer truncate ${
+                  isCurrent
+                    ? 'bg-blue-900 text-white shadow-xs'
+                    : 'bg-white hover:bg-slate-200 text-slate-700 border border-slate-200'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Official Statutory Footnote in Sidebar */}
       <div className="p-3 border-t border-slate-100 bg-slate-50 text-[11px] text-slate-500">
