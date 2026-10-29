@@ -36,8 +36,8 @@ app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health Check
-app.get('/api/health', (req, res) => {
+// Health Check (supports both /api/health and /health)
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
     status: 'ONLINE',
     service: 'E-Voters Commission API Portal',
@@ -45,12 +45,21 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Mount Routes
+// Mount Routes (support both /api/* and direct routes for Vercel rewrites)
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
+
 app.use('/api/admin', adminRoutes);
+app.use('/admin', adminRoutes);
+
 app.use('/api/voters', voterRoutes);
+app.use('/voters', voterRoutes);
+
 app.use('/api/candidates', candidateRoutes);
+app.use('/candidates', candidateRoutes);
+
 app.use('/api/elections', electionRoutes);
+app.use('/elections', electionRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

@@ -8,7 +8,39 @@ const logger = require('../utils/logger');
 let pool = null;
 let isUsingFallback = false;
 let fileStore = null;
-const STORE_PATH = path.resolve(__dirname, '../../../database/data_store.json');
+
+const getStorePath = () => {
+  if (process.env.VERCEL) {
+    const tmpPath = path.join('/tmp', 'data_store.json');
+    if (!fs.existsSync(tmpPath)) {
+      try {
+        const localCandidates = [
+          path.resolve(__dirname, '../../../database/data_store.json'),
+          path.resolve(__dirname, '../../database/data_store.json'),
+          path.resolve(__dirname, '../database/data_store.json'),
+          path.resolve(process.cwd(), 'database/data_store.json'),
+        ];
+        let copied = false;
+        for (const cand of localCandidates) {
+          if (fs.existsSync(cand)) {
+            fs.writeFileSync(tmpPath, fs.readFileSync(cand, 'utf-8'), 'utf-8');
+            copied = true;
+            break;
+          }
+        }
+        if (!copied) {
+          fs.writeFileSync(tmpPath, JSON.stringify(getDefaultSeedData(), null, 2), 'utf-8');
+        }
+      } catch (e) {
+        logger.warn('Could not initialize /tmp/data_store.json:', e.message);
+      }
+    }
+    return tmpPath;
+  }
+  return path.resolve(__dirname, '../../../database/data_store.json');
+};
+
+const STORE_PATH = getStorePath();
 
 // Initial default seed dataset
 const getDefaultSeedData = () => {
@@ -414,18 +446,23 @@ const getDefaultSeedData = () => {
 // Load or initialize store from disk
 const loadFileStore = () => {
   try {
-    const dir = path.dirname(STORE_PATH);
+    const storePath = getStorePath();
+    const dir = path.dirname(storePath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    if (fs.existsSync(STORE_PATH)) {
-      const content = fs.readFileSync(STORE_PATH, 'utf-8');
+    if (fs.existsSync(storePath)) {
+      const content = fs.readFileSync(storePath, 'utf-8');
       fileStore = JSON.parse(content);
-      logger.info('Loaded existing database store from', STORE_PATH);
+      logger.info('Loaded existing database store from', storePath);
     } else {
       fileStore = getDefaultSeedData();
-      fs.writeFileSync(STORE_PATH, JSON.stringify(fileStore, null, 2), 'utf-8');
-      logger.info('Initialized fresh database store with default ECI seed data at', STORE_PATH);
+      try {
+        fs.writeFileSync(storePath, JSON.stringify(fileStore, null, 2), 'utf-8');
+      } catch (e) {
+        logger.warn('Could not write seed data to storePath, using in-memory store:', e.message);
+      }
+      logger.info('Initialized fresh database store with default ECI seed data at', storePath);
     }
   } catch (err) {
     logger.error('Error loading fallback data store:', err.message);
@@ -436,7 +473,12 @@ const loadFileStore = () => {
 const saveFileStore = () => {
   try {
     if (fileStore) {
-      fs.writeFileSync(STORE_PATH, JSON.stringify(fileStore, null, 2), 'utf-8');
+      const storePath = getStorePath();
+      const dir = path.dirname(storePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(storePath, JSON.stringify(fileStore, null, 2), 'utf-8');
     }
   } catch (err) {
     logger.error('Error saving data store:', err.message);
@@ -449,8 +491,9 @@ const saveFileStore = () => {
  */
 const executeFallbackQuery = async (sql, params = []) => {
   try {
-    if (fs.existsSync(STORE_PATH)) {
-      const content = fs.readFileSync(STORE_PATH, 'utf-8');
+    const storePath = getStorePath();
+    if (fs.existsSync(storePath)) {
+      const content = fs.readFileSync(storePath, 'utf-8');
       fileStore = JSON.parse(content);
     } else if (!fileStore) {
       loadFileStore();
