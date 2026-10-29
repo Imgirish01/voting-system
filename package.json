@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "ECI Themed College Election Voting System Monorepo Root",
   "scripts": {
-    "build": "npm run build:frontend",
-    "build:frontend": "cd frontend && npm install && npm run build",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "build:frontend": "npm --prefix frontend install && npm --prefix frontend run build",
     "start:backend": "cd backend && npm start",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
