@@ -2,27 +2,45 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext(null);
+const USER_KEY = 'eci_election_current_user';
+const TOKEN_KEY = 'token';
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem(USER_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
   const [voterApplication, setVoterApplication] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const persistUser = (newUser) => {
+    setUser(newUser);
+    if (newUser) {
+      try {
+        localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+      } catch (e) {}
+    } else {
+      localStorage.removeItem(USER_KEY);
+      localStorage.removeItem(TOKEN_KEY);
+    }
+  };
 
   const fetchCurrentUser = async () => {
     try {
-      setLoading(true);
       const res = await api.get('/auth/me');
       if (res.success && res.user) {
-        setUser(res.user);
+        persistUser(res.user);
         setVoterApplication(res.voterApplication || null);
-      } else {
-        setUser(null);
       }
     } catch (err) {
-      setUser(null);
-    } finally {
-      setLoading(false);
+      // Keep existing cached user if present
+      console.warn('Silent session refresh:', err.message);
     }
   };
 
@@ -35,11 +53,16 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/auth/login', { email, password });
       if (res.success) {
-        setUser(res.user);
-        // Refresh full profile
-        await fetchCurrentUser();
+        if (res.token) {
+          localStorage.setItem(TOKEN_KEY, res.token);
+        }
+        persistUser(res.user);
+        if (res.voterApplication) {
+          setVoterApplication(res.voterApplication);
+        }
         return res;
       }
+      throw new Error(res.message || 'Login failed');
     } catch (err) {
       setError(err.message);
       throw err;
@@ -51,10 +74,16 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/auth/register', formData);
       if (res.success) {
-        setUser(res.user);
-        await fetchCurrentUser();
+        if (res.token) {
+          localStorage.setItem(TOKEN_KEY, res.token);
+        }
+        persistUser(res.user);
+        if (res.voterApplication) {
+          setVoterApplication(res.voterApplication);
+        }
         return res;
       }
+      throw new Error(res.message || 'Registration failed');
     } catch (err) {
       setError(err.message);
       throw err;
@@ -67,7 +96,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.warn('Logout error', err);
     } finally {
-      setUser(null);
+      persistUser(null);
       setVoterApplication(null);
     }
   };
@@ -75,11 +104,15 @@ export const AuthProvider = ({ children }) => {
   const switchAccount = async (email, password) => {
     setLoading(true);
     try {
-      await api.post('/auth/logout');
       const res = await api.post('/auth/login', { email, password });
       if (res.success) {
-        setUser(res.user);
-        await fetchCurrentUser();
+        if (res.token) {
+          localStorage.setItem(TOKEN_KEY, res.token);
+        }
+        persistUser(res.user);
+        if (res.voterApplication) {
+          setVoterApplication(res.voterApplication);
+        }
         return res.user;
       }
     } catch (err) {
@@ -116,7 +149,13 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/auth/switch-role', { role: targetRole });
       if (res.success && res.user) {
-        setUser(res.user);
+        if (res.token) {
+          localStorage.setItem(TOKEN_KEY, res.token);
+        }
+        persistUser(res.user);
+        if (res.voterApplication) {
+          setVoterApplication(res.voterApplication);
+        }
         const dashboards = {
           ADMIN: '/admin/dashboard',
           VOTER: '/voter/dashboard',
@@ -177,4 +216,3 @@ export const useAuth = () => {
   }
   return context;
 };
-

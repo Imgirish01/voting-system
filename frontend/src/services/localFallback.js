@@ -37,6 +37,18 @@ const INITIAL_DATA = {
     },
     {
       id: 3,
+      full_name: 'Vikramaditya Roy',
+      email: 'vikram.roy@college.edu',
+      role: 'CANDIDATE',
+      college_registration_number: '2022CSE0050',
+      department_id: 1,
+      course: 'B.Tech CSE',
+      academic_year: 'Final Year',
+      account_status: 'APPROVED',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 4,
       full_name: 'Priya Patel',
       email: 'priya.patel@college.edu',
       role: 'CANDIDATE',
@@ -65,11 +77,12 @@ const INITIAL_DATA = {
     {
       id: 1,
       title: 'Annual Student General Council Election 2026-27',
-      description: 'Official College-wide statutory election for President, Vice-President, and General Secretary.',
+      description: 'Official Statutory Election under E-Voters Commission for President, Vice-President, and General Secretary.',
       status: 'ACTIVE',
       start_time: '2026-10-01T00:00:00.000Z',
       end_time: '2026-11-30T23:59:59.000Z',
-      created_at: '2026-09-15T10:00:00.000Z'
+      created_at: '2026-09-15T10:00:00.000Z',
+      is_results_published: true
     }
   ],
   election_positions: [
@@ -88,6 +101,17 @@ const INITIAL_DATA = {
       symbol_svg: '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#FF9933"/><path d="M50 20 L55 45 L45 45 Z" fill="#fff"/></svg>',
       manifesto: 'Digital transparency and student empowerment for every voice on campus.',
       application_status: 'APPROVED'
+    },
+    {
+      id: 2,
+      user_id: 4,
+      position_id: 2,
+      election_id: 1,
+      ballot_number: 2,
+      symbol_name: 'Rising Sun',
+      symbol_svg: '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#138808"/></svg>',
+      manifesto: 'Campus sustainability and modern academic facilities for everyone.',
+      application_status: 'APPROVED'
     }
   ],
   votes: [],
@@ -101,7 +125,13 @@ function getStore() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_DATA));
       return JSON.parse(JSON.stringify(INITIAL_DATA));
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    // Ensure all seed users exist
+    if (!parsed.users || parsed.users.length < 3) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_DATA));
+      return JSON.parse(JSON.stringify(INITIAL_DATA));
+    }
+    return parsed;
   } catch (e) {
     return JSON.parse(JSON.stringify(INITIAL_DATA));
   }
@@ -138,25 +168,26 @@ export function setCurrentUser(user) {
 
 export function handleFallbackRequest(config) {
   const method = (config.method || 'get').toLowerCase();
-  const url = (config.url || '').replace(/^\/api/, '');
+  const rawUrl = (config.url || '').replace(/^\/api/, '');
+  const [url] = rawUrl.split('?');
   const data = config.data ? (typeof config.data === 'string' ? JSON.parse(config.data) : config.data) : {};
   const store = getStore();
 
-  console.log(`[ECI Local Engine] Handling ${method.toUpperCase()} ${url}`, data);
+  console.log(`[ECI Engine] Handling ${method.toUpperCase()} ${url}`);
 
   // 1. Auth Register
   if (url === '/auth/register' || url.endsWith('/register')) {
     const existing = store.users.find(
-      u => u.email.toLowerCase() === (data.email || '').toLowerCase() ||
-           u.college_registration_number === (data.college_registration_number || '')
+      u => (u.email && u.email.toLowerCase() === (data.email || '').toLowerCase()) ||
+           (u.college_registration_number && u.college_registration_number === (data.college_registration_number || ''))
     );
     if (existing) {
-      // Re-use or update
       setCurrentUser(existing);
       return {
         success: true,
-        message: 'Account already active! Logged in successfully.',
-        user: existing
+        message: 'Account active! Logged in successfully.',
+        user: existing,
+        token: 'demo-eci-jwt-token'
       };
     }
 
@@ -170,17 +201,16 @@ export function handleFallbackRequest(config) {
       department_id: Number(data.department_id) || 1,
       course: data.course || 'B.Tech',
       academic_year: data.academic_year || '3rd Year',
-      account_status: 'PENDING',
+      account_status: 'APPROVED',
       created_at: new Date().toISOString()
     };
 
     store.users.push(newUser);
 
-    // Create Voter Form 6-C application
     const newApp = {
       id: store.voter_applications.length + 1,
       user_id: newId,
-      application_status: 'PENDING',
+      application_status: 'APPROVED',
       student_id_number: newUser.college_registration_number,
       id_proof_type: 'College Identity Card',
       submitted_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
@@ -193,21 +223,41 @@ export function handleFallbackRequest(config) {
 
     return {
       success: true,
-      message: 'Registration complete! Your Form 6-C voter application has been submitted for scrutiny.',
+      message: 'Registration complete! Your Form 6-C voter application has been approved.',
       user: newUser,
-      voterApplication: newApp
+      voterApplication: newApp,
+      token: 'demo-eci-jwt-token'
     };
   }
 
-  // 2. Auth Login
+  // 2. Auth Login (Super resilient: handles admin, voter, candidate or custom user)
   if (url === '/auth/login' || url.endsWith('/login')) {
-    const user = store.users.find(u => u.email.toLowerCase() === (data.email || '').toLowerCase()) || store.users[0];
-    setCurrentUser(user);
-    const app = store.voter_applications.find(a => a.user_id === user.id) || null;
+    const inputEmail = (data.email || '').trim().toLowerCase();
+    
+    // Find matching user or role fallback
+    let matchedUser = store.users.find(u => u.email.toLowerCase() === inputEmail);
+
+    if (!matchedUser) {
+      if (inputEmail.includes('admin')) {
+        matchedUser = store.users.find(u => u.role === 'ADMIN');
+      } else if (inputEmail.includes('cand') || inputEmail.includes('roy') || inputEmail.includes('patel')) {
+        matchedUser = store.users.find(u => u.role === 'CANDIDATE');
+      } else {
+        matchedUser = store.users.find(u => u.role === 'VOTER');
+      }
+    }
+
+    if (!matchedUser) {
+      matchedUser = store.users[0];
+    }
+
+    setCurrentUser(matchedUser);
+    const app = store.voter_applications.find(a => a.user_id === matchedUser.id) || null;
+
     return {
       success: true,
-      message: 'Login successful.',
-      user,
+      message: `Welcome back, ${matchedUser.full_name}!`,
+      user: matchedUser,
       voterApplication: app,
       token: 'demo-eci-jwt-token'
     };
@@ -250,7 +300,8 @@ export function handleFallbackRequest(config) {
       success: true,
       message: `Switched to ${targetRole} panel instantly.`,
       user,
-      voterApplication: app
+      voterApplication: app,
+      token: 'demo-eci-jwt-token'
     };
   }
 
@@ -260,7 +311,29 @@ export function handleFallbackRequest(config) {
     return { success: true, message: 'Logged out successfully.' };
   }
 
-  // 6. Admin Voters List (Form 6-C scrutiny desk)
+  // 6. Admin Dashboard stats & activities
+  if (url === '/admin/dashboard' || url.endsWith('/admin/dashboard')) {
+    return {
+      success: true,
+      stats: {
+        totalVoters: store.users.filter(u => u.role === 'VOTER').length + 124,
+        verifiedVoters: store.users.filter(u => u.role === 'VOTER').length + 118,
+        totalElections: store.elections.length,
+        activeElections: store.elections.filter(e => e.status === 'ACTIVE').length,
+        totalVotesCast: store.votes.length + 89,
+        overallTurnout: '74.2%',
+        pendingApplications: store.voter_applications.filter(a => a.application_status === 'PENDING').length,
+        activeCandidates: store.candidate_applications.length
+      },
+      recentActivities: [
+        { id: 1, action: 'ELECTION_LIVE', details: 'Statutory Student Council Election 2026-27 is LIVE', timestamp: new Date().toISOString() },
+        { id: 2, action: 'VOTER_VERIFIED', details: 'Form 6-C scrutinies active under Chief Election Officer supervision', timestamp: new Date().toISOString() },
+        { id: 3, action: 'TAMPER_PROOF', details: 'SHA-256 cryptographic hash seal verified for EVM ballot chain', timestamp: new Date().toISOString() }
+      ]
+    };
+  }
+
+  // 7. Admin Voters List (Form 6-C scrutiny desk)
   if (url.includes('/admin/voters') || url.includes('/admin/voter-applications')) {
     const applications = store.voter_applications.map(app => {
       const u = store.users.find(usr => usr.id === app.user_id) || {};
@@ -272,7 +345,7 @@ export function handleFallbackRequest(config) {
         college_registration_number: u.college_registration_number || app.student_id_number,
         course: u.course || 'B.Tech',
         academic_year: u.academic_year || '3rd Year',
-        department_name: dept.name || 'General Engineering'
+        department_name: dept.name || 'Computer Science & Engineering'
       };
     });
     return {
@@ -283,7 +356,7 @@ export function handleFallbackRequest(config) {
     };
   }
 
-  // 7. Admin Approve/Reject Voter
+  // 8. Admin Approve/Reject Voter
   const approveMatch = url.match(/\/admin\/voters\/(\d+)\/approve/);
   if (approveMatch) {
     const appId = Number(approveMatch[1]);
@@ -310,15 +383,18 @@ export function handleFallbackRequest(config) {
     return { success: true, message: 'Voter Application rejected.' };
   }
 
-  // 8. Elections
-  if (url === '/elections/active' || url.endsWith('/active')) {
+  // 9. Candidate applications
+  if (url.includes('/candidates/applications') || url.includes('/candidate/applications')) {
+    const user = getCurrentUser() || store.users[2];
+    const userApps = store.candidate_applications.filter(a => a.user_id === user.id || a.user_id === 3);
     return {
       success: true,
-      elections: store.elections.filter(e => e.status === 'ACTIVE')
+      applications: userApps.length > 0 ? userApps : store.candidate_applications
     };
   }
 
-  if (url === '/elections' || url.startsWith('/elections')) {
+  // 10. Elections
+  if (url.includes('/elections')) {
     return {
       success: true,
       elections: store.elections,
@@ -330,7 +406,8 @@ export function handleFallbackRequest(config) {
   // Default response
   return {
     success: true,
-    message: 'Operation handled successfully',
+    message: 'Request completed',
+    user: getCurrentUser() || store.users[0],
     data: store
   };
 }

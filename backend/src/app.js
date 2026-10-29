@@ -46,20 +46,11 @@ app.get(['/api/health', '/health'], (req, res) => {
 });
 
 // Mount Routes (support both /api/* and direct routes for Vercel rewrites)
-app.use('/api/auth', authRoutes);
-app.use('/auth', authRoutes);
-
-app.use('/api/admin', adminRoutes);
-app.use('/admin', adminRoutes);
-
-app.use('/api/voters', voterRoutes);
-app.use('/voters', voterRoutes);
-
-app.use('/api/candidates', candidateRoutes);
-app.use('/candidates', candidateRoutes);
-
-app.use('/api/elections', electionRoutes);
-app.use('/elections', electionRoutes);
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/admin', '/admin'], adminRoutes);
+app.use(['/api/voters', '/api/voter', '/voters', '/voter'], voterRoutes);
+app.use(['/api/candidates', '/api/candidate', '/candidates', '/candidate'], candidateRoutes);
+app.use(['/api/elections', '/api/election', '/elections', '/election'], electionRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
