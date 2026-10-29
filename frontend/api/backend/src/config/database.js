@@ -37,7 +37,11 @@ const getStorePath = () => {
     }
     return tmpPath;
   }
-  return path.resolve(__dirname, '../../../database/data_store.json');
+  const cand1 = path.resolve(__dirname, '../../../database/data_store.json');
+  if (fs.existsSync(cand1)) return cand1;
+  const cand2 = path.resolve(__dirname, '../../database/data_store.json');
+  if (fs.existsSync(cand2)) return cand2;
+  return cand1;
 };
 
 const STORE_PATH = getStorePath();
